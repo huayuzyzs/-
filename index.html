@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="中药百草园 - 在游戏中学习中医药文化，收集珍贵药材，体验中医辨证论治思想">
+    <meta name="keywords" content="中医,中药,百草园,教育游戏,中医药文化">
+    <title>中药百草园 - 中医药文化互动游戏</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6B4226',
+                        secondary: '#4A6741',
+                        accent: '#D97706',
+                        paper: '#F9F6EF',
+                        ink: '#2D2A26',
+                        bronze: '#CD7F32',
+                        gold: '#D4AF37',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-pattern {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%234A6741" opacity="0.05" d="M50,10 C70,10 90,25 90,50 C90,75 70,90 50,90 C30,90 10,75 10,50 C10,25 30,10 50,10 Z"/></svg>');
+                background-size: 200px;
+            }
+            .herb-shadow {
+                box-shadow: 0 4px 6px -1px rgba(107, 66, 38, 0.1), 0 2px 4px -1px rgba(107, 66, 38, 0.06);
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px -3px rgba(107, 66, 38, 0.2);
+            }
+            .pulse-grow {
+                animation: pulseGrow 2s infinite;
+            }
+            @keyframes pulseGrow {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            .float {
+                animation: float 3s ease-in-out infinite;
+            }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            .fade-in {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .shake {
+                animation: shake 0.5s;
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-5px); }
+                40%, 80% { transform: translateX(5px); }
+            }
+            .scrollbar-thin {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(107, 66, 38, 0.3) transparent;
+            }
+            .scrollbar-thin::-webkit-scrollbar {
+                width: 6px;
+            }
+            .scrollbar-thin::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .scrollbar-thin::-webkit-scrollbar-thumb {
+                background-color: rgba(107, 66, 38, 0.3);
+                border-radius: 3px;
+            }
+            .glow {
+                box-shadow: 0 0 15px rgba(217, 119, 6, 0.5);
+            }
+            .bounce-in {
+                animation: bounceIn 0.6s;
+            }
+            @keyframes bounceIn {
+                0% { transform: scale(0.3); opacity: 0; }
+                50% { transform: scale(1.05); }
+                70% { transform: scale(0.9); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            .slide-up {
+                animation: slideUp 0.5s ease-out;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .breathing {
+                animation: breathing 4s ease-in-out infinite;
+            }
+            @keyframes breathing {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            .progress-bar {
+                height: 8px;
+                border-radius: 4px;
+                overflow: hidden;
+                background-color: #e5e7eb;
+            }
+            .progress-fill {
+                height: 100%;
+                border-radius: 4px;
+                transition: width 0.5s ease-in-out;
+            }
+            .achievement-badge {
+                background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+                color: white;
+                border-radius: 9999px;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+            }
+            .stagger-animation > * {
+                animation: slideUp 0.5s ease-out both;
+            }
+            .stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+            .stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+            .stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+            .stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+            .stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+            .stagger-animation > *:nth-child(6) { animation-delay: 0.6s; }
+            .herb-icon {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                margin: 0 auto;
+            }
+            .herb-common { background: linear-gradient(135deg, #4ade80, #22c55e); }
+            .herb-rare { background: linear-gradient(135deg, #fbbf24, #d97706); }
+            .herb-legendary { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+            .herb-icon-mint { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); }
+            .herb-icon-chrysanthemum { background: linear-gradient(135deg, #fef08a, #fde047); }
+            .herb-icon-mugwort { background: linear-gradient(135deg, #bbf7d0, #86efac); }
+            .herb-icon-ginseng { background: linear-gradient(135deg, #fed7aa, #fdba74); }
+            .herb-icon-peony { background: linear-gradient(135deg, #f9a8d4, #f472b6); }
+            .herb-icon-lotus { background: linear-gradient(135deg, #c7d2fe, #a5b4fc); }
+            .seasonal-border {
+                animation: seasonalBorder 10s infinite;
+            }
+            @keyframes seasonalBorder {
+                0% { border-color: #a7f3d0; }
+                25% { border-color: #fef08a; }
+                50% { border-color: #fed7aa; }
+                75% { border-color: #bfdbfe; }
+                100% { border-color: #a7f3d0; }
+            }
+            .confetti {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                opacity: 0.7;
+                animation: confetti-fall 5s linear forwards;
+            }
+            @keyframes confetti-fall {
+                0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+            }
+            @media (max-width: 640px) {
+                .herb-icon {
+                    width: 60px;
+                    height: 60px;
+                    font-size: 24px;
+                }
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-b from-green-50 to-amber-50 min-h-screen font-serif text-ink bg-pattern">
+    <div class="max-w-6xl mx-auto p-4 md:p-6">
+        <!-- 标题区域 -->
+        <header class="text-center mb-4 md:mb-6 fade-in">
+            <div class="inline-block bg-paper/80 rounded-full px-6 py-2 mb-2 herb-shadow border border-primary/20 breathing seasonal-border">
+                <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-primary" style="font-family: 'Ma Shan Zheng', cursive;">中药百草园</h1>
+                <p class="text-secondary italic text-sm md:text-base">培育、辨识、收集珍贵药材</p>
+            </div>
+            <div class="mt-4 text-center max-w-2xl mx-auto">
+                <p class="text-secondary/80 text-sm">探索中医药文化，学习草本知识，完成你的百草园收藏</p>
+            </div>
+            
+            <!-- 季节和天气指示器 -->
+            <div class="mt-4 flex flex-wrap justify-center items-center gap-2 md:gap-4">
+                <div id="seasonIndicator" class="flex items-center bg-white/80 rounded-full px-4 py-2 herb-shadow">
+                    <i class="fa fa-leaf text-green-500 mr-2"></i>
+                    <span id="currentSeason" class="text-sm font-bold text-primary">春季</span>
+                </div>
+                <div id="weatherIndicator" class="flex items-center bg-white/80 rounded-full px-4 py-2 herb-shadow">
+                    <i id="weatherIcon" class="fa fa-sun-o text-yellow-500 mr-2"></i>
+                    <span id="currentWeather" class="text-sm font-bold text-primary">晴朗</span>
+                </div>
+                <div id="timeIndicator" class="flex items-center bg-white/80 rounded-full px-4 py-2 herb-shadow">
+                    <i class="fa fa-clock-o text-primary mr-2"></i>
+                    <span id="currentTime" class="text-sm font-bold text-primary">上午</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 游戏主区域 -->
+        <main class="bg-paper/90 rounded-2xl p-4 md:p-6 herb-shadow border-2 border-primary/20 backdrop-blur-sm">
+            <!-- 游戏状态条 -->
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-4 p-3 bg-gradient-to-r from-secondary/10 to-accent/10 rounded-xl border border-secondary/20">
+                <div class="flex items-center">
+                    <span class="text-primary font-bold mr-2 text-sm md:text-base"><i class="fa fa-leaf mr-1"></i> 已收集:</span>
+                    <span id="collectedCount" class="bg-secondary/20 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">0/36</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-primary font-bold mr-2 text-sm md:text-base"><i class="fa fa-star mr-1"></i> 智慧:</span>
+                    <span id="wisdomPoints" class="bg-accent/20 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">0</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-primary font-bold mr-2 text-sm md:text-base"><i class="fa fa-heartbeat mr-1"></i> 精力:</span>
+                    <span id="energyPoints" class="bg-blue-500/20 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">10/10</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-primary font-bold mr-2 text-sm md:text-base"><i class="fa fa-trophy mr-1"></i> 成就:</span>
+                    <span id="achievementCount" class="bg-bronze/20 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">0/12</span>
+                </div>
+            </div>
+
+            <!-- 操作按钮组 -->
+            <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                <button id="guideBtn" class="bg-secondary/20 hover:bg-secondary/30 text-secondary py-1 px-3 rounded-full text-xs md:text-sm transition-colors hover-lift">
+                    <i class="fa fa-book mr-1"></i> 药草图鉴
+                </button>
+                <button id="achievementBtn" class="bg-bronze/20 hover:bg-bronze/30 text-bronze py-1 px-3 rounded-full text-xs md:text-sm transition-colors hover-lift">
+                    <i class="fa fa-trophy mr-1"></i> 成就
+                </button>
+                <button id="taskBtn" class="bg-accent/20 hover:bg-accent/30 text-accent py-1 px-3 rounded-full text-xs md:text-sm transition-colors hover-lift">
+                    <i class="fa fa-tasks mr-1"></i> 任务
+                </button>
+                <button id="helpBtn" class="bg-primary/20 hover:bg-primary/30 text-primary py-1 px-3 rounded-full text-xs md:text-sm transition-colors hover-lift">
+                    <i class="fa fa-question-circle mr-1"></i> 说明
+                </button>
+                <button id="settingsBtn" class="bg-primary/20 hover:bg-primary/30 text-primary py-1 px-3 rounded-full text-xs md:text-sm transition-colors hover-lift">
+                    <i class="fa fa-cog mr-1"></i> 设置
+                </button>
+            </div>
+
+            <!-- 场景切换 -->
+            <div class="flex border-b border-primary/20 mb-4 overflow-x-auto scrollbar-thin">
+                <button id="gardenBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 font-bold text-primary border-b-2 border-primary flex items-center text-sm md:text-base">
+                    <i class="fa fa-tree mr-1 md:mr-2"></i> <span class="hidden sm:inline">我的</span>百草园
+                </button>
+                <button id="exploreBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 text-secondary/70 hover:text-secondary transition-colors flex items-center text-sm md:text-base">
+                    <i class="fa fa-binoculars mr-1 md:mr-2"></i> 探索采药
+                </button>
+                <button id="minigameBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 text-secondary/70 hover:text-secondary transition-colors flex items-center text-sm md:text-base">
+                    <i class="fa fa-graduation-cap mr-1 md:mr-2"></i> 辨识挑战
+                </button>
+                <button id="marketBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 text-secondary/70 hover:text-secondary transition-colors flex items-center text-sm md:text-base">
+                    <i class="fa fa-shopping-cart mr-1 md:mr-2"></i> 草药市场
+                </button>
+                <button id="formulaBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 text-secondary/70 hover:text-secondary transition-colors flex items-center text-sm md:text-base">
+                    <i class="fa fa-flask mr-1 md:mr-2"></i> 中药配方
+                </button>
+                <button id="knowledgeBtn" class="scene-btn flex-shrink-0 py-2 px-3 md:px-4 text-secondary/70 hover:text-secondary transition-colors flex items-center text-sm md:text-base">
+                    <i class="fa fa-book mr-1 md:mr-2"></i> 中医知识
+                </button>
+            </div>
+
+            <!-- 百草园场景 -->
+            <div id="gardenScene" class="fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">我的百草园</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 点击已收集的草药查看详情
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">在这里种植你收集到的草药，它们会慢慢生长。点击成熟的草药可以了解更多信息。</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 mb-6 stagger-animation" id="gardenGrid">
+                    <div class="garden-plot bg-secondary/5 border-2 border-dashed border-secondary/30 rounded-xl h-36 md:h-40 flex flex-col items-center justify-center hover:bg-secondary/10 transition-colors cursor-pointer">
+                        <i class="fa fa-plus-circle text-2xl md:text-3xl text-secondary/50 mb-2"></i>
+                        <p class="text-xs md:text-sm text-secondary/70 text-center px-2">前往探索<br>获取草药</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-secondary/10 to-accent/10 p-3 md:p-4 rounded-xl border border-secondary/20">
+                    <h3 class="font-bold text-sm md:text-base text-primary mb-2 flex items-center"><i class="fa fa-lightbulb-o mr-2"></i> 百草园提示</h3>
+                    <ul class="text-xs md:text-sm space-y-1 list-none text-secondary">
+                        <li class="flex items-start"><i class="fa fa-leaf text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>在"探索采药"中收集新草药</span></li>
+                        <li class="flex items-start"><i class="fa fa-graduation-cap text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>在"辨识挑战"中测试中药知识，获得智慧值</span></li>
+                        <li class="flex items-start"><i class="fa fa-shopping-cart text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>在"草药市场"用智慧值交换稀有草药</span></li>
+                        <li class="flex items-start"><i class="fa fa-trophy text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>收集全部36种草药完成你的百草园</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 探索场景 -->
+            <div id="exploreScene" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">探索采药</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 点击草药查看信息并收集
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">在不同的地点探索，寻找各种珍贵的草药。每次探索消耗1点精力，精力每5分钟恢复1点。</p>
+                
+                <!-- 地点选择 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 stagger-animation">
+                    <div class="location-card hover-lift bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-2 md:p-3 text-center cursor-pointer border border-green-200" data-location="forest">
+                        <i class="fa fa-tree text-xl md:text-2xl text-green-600 mb-1"></i>
+                        <p class="text-xs md:text-sm font-bold text-green-800">森林</p>
+                        <p class="text-xs text-green-600 mt-1 hidden md:block">湿润阴凉</p>
+                    </div>
+                    <div class="location-card hover-lift bg-gradient-to-br from-stone-50 to-stone-100 rounded-xl p-2 md:p-3 text-center cursor-pointer border border-stone-200" data-location="mountain">
+                        <i class="fa fa-mountain text-xl md:text-2xl text-stone-600 mb-1"></i>
+                        <p class="text-xs md:text-sm font-bold text-stone-800">山地</p>
+                        <p class="text-xs text-stone-600 mt-1 hidden md:block">高海拔</p>
+                    </div>
+                    <div class="location-card hover-lift bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-2 md:p-3 text-center cursor-pointer border border-blue-200" data-location="river">
+                        <i class="fa fa-tint text-xl md:text-2xl text-blue-600 mb-1"></i>
+                        <p class="text-xs md:text-sm font-bold text-blue-800">河边</p>
+                        <p class="text-xs text-blue-600 mt-1 hidden md:block">近水潮湿</p>
+                    </div>
+                    <div class="location-card hover-lift bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-2 md:p-3 text-center cursor-pointer border border-amber-200" data-location="field">
+                        <i class="fa fa-pagelines text-xl md:text-2xl text-amber-600 mb-1"></i>
+                        <p class="text-xs md:text-sm font-bold text-amber-800">田野</p>
+                        <p class="text-xs text-amber-600 mt-1 hidden md:block">阳光充足</p>
+                    </div>
+                </div>
+                
+                <!-- 探索区域 -->
+                <div id="exploreArea" class="relative bg-gradient-to-b from-green-100 to-green-200 rounded-xl h-48 md:h-80 mb-4 overflow-hidden border-2 border-green-300">
+                    <div class="absolute inset-0 flex items-center justify-center flex-col p-4">
+                        <i class="fa fa-compass text-3xl md:text-4xl text-green-600 mb-2 opacity-50 float"></i>
+                        <p class="text-green-700/60 font-medium text-sm md:text-base text-center">选择一个地点开始探索</p>
+                        <p class="text-green-600/50 text-xs md:text-sm mt-1">点击上方地点卡片</p>
+                    </div>
+                </div>
+                
+                <!-- 探索信息 -->
+                <div id="exploreInfo" class="hidden bg-white p-3 md:p-4 rounded-xl border-2 border-accent/30 glow bounce-in">
+                    <h3 class="font-bold text-primary text-center mb-2 text-base md:text-lg" id="foundHerbName">发现了甘草</h3>
+                    <div class="grid grid-cols-3 gap-2 md:gap-3 text-xs md:text-sm mb-3">
+                        <div class="text-center bg-secondary/10 rounded-lg p-2">
+                            <p class="text-secondary font-bold">性味</p>
+                            <p id="herbNature" class="text-primary font-medium text-xs md:text-sm">甘，平</p>
+                        </div>
+                        <div class="text-center bg-secondary/10 rounded-lg p-2">
+                            <p class="text-secondary font-bold">归经</p>
+                            <p id="herbMeridian" class="text-primary font-medium text-xs md:text-sm">心、肺</p>
+                        </div>
+                        <div class="text-center bg-secondary/10 rounded-lg p-2">
+                            <p class="text-secondary font-bold">功效</p>
+                            <p id="herbEffect" class="text-primary font-medium text-xs md:text-sm">补脾</p>
+                        </div>
+                    </div>
+                    <p id="herbDescription" class="text-xs md:text-sm text-secondary/80 mb-3 text-center"></p>
+                    <div class="mt-3 text-center">
+                        <button id="collectBtn" class="bg-gradient-to-r from-accent to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white py-2 px-4 md:px-6 rounded-full text-xs md:text-sm transition-colors hover-lift font-bold">
+                            <i class="fa fa-hand-paper-o mr-2"></i> 收集草药
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 辨识挑战场景 -->
+            <div id="minigameScene" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">辨识挑战</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 答对可获得智慧值
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">测试你的中药辨识能力，答对可获得智慧值！</p>
+                
+                <!-- 挑战类型选择 -->
+                <div class="flex flex-wrap gap-2 mb-4 md:mb-6 stagger-animation">
+                    <button class="challenge-type-btn bg-gradient-to-r from-accent to-amber-600 text-white py-1 md:py-2 px-3 md:px-4 rounded-full text-xs md:text-sm font-bold hover-lift" data-type="name">
+                        <i class="fa fa-tag mr-1"></i> 名称辨识
+                    </button>
+                    <button class="challenge-type-btn bg-secondary/20 hover:bg-secondary/30 text-secondary py-1 md:py-2 px-3 md:px-4 rounded-full text-xs md:text-sm transition-colors hover-lift" data-type="effect">
+                        <i class="fa fa-heart mr-1"></i> 功效匹配
+                    </button>
+                    <button class="challenge-type-btn bg-secondary/20 hover:bg-secondary/30 text-secondary py-1 md:py-2 px-3 md:px-4 rounded-full text-xs md:text-sm transition-colors hover-lift" data-type="nature">
+                        <i class="fa fa-lemon-o mr-1"></i> 性味判断
+                    </button>
+                    <button class="challenge-type-btn bg-secondary/20 hover:bg-secondary/30 text-secondary py-1 md:py-2 px-3 md:px-4 rounded-full text-xs md:text-sm transition-colors hover-lift" data-type="meridian">
+                        <i class="fa fa-sitemap mr-1"></i> 归经辨识
+                    </button>
+                </div>
+                
+                <!-- 挑战区域 -->
+                <div id="challengeArea" class="bg-white p-3 md:p-4 rounded-xl border border-primary/20 mb-4">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="md:w-1/3">
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl overflow-hidden h-32 md:h-48 flex items-center justify-center border border-green-200">
+                                <div id="challengeHerbIcon" class="herb-icon herb-common">
+                                    <i class="fa fa-leaf text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h3 class="font-bold text-primary mb-3 text-base md:text-lg" id="challengeQuestion">这味中药的名称是？</h3>
+                            <div class="space-y-2" id="challengeOptions"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 挑战反馈 -->
+                <div id="challengeFeedback" class="hidden p-3 md:p-4 rounded-xl mb-4 fade-in">
+                    <p id="feedbackText" class="text-center text-sm md:text-base"></p>
+                    <div class="mt-3 text-center">
+                        <button id="nextChallengeBtn" class="bg-gradient-to-r from-accent to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white py-2 px-4 md:px-6 rounded-full text-xs md:text-sm transition-colors hover-lift font-bold">
+                            下一题 <i class="fa fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 草药市场场景 -->
+            <div id="marketScene" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">草药市场</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 用智慧值交换稀有草药
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">在这里你可以用智慧值交换稀有的草药，丰富你的百草园收藏！</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 stagger-animation" id="marketGrid"></div>
+                
+                <div class="bg-gradient-to-r from-secondary/10 to-accent/10 p-3 md:p-4 rounded-xl border border-secondary/20">
+                    <h3 class="font-bold text-sm md:text-base text-primary mb-2 flex items-center"><i class="fa fa-lightbulb-o mr-2"></i> 市场提示</h3>
+                    <ul class="text-xs md:text-sm space-y-1 list-none text-secondary">
+                        <li class="flex items-start"><i class="fa fa-graduation-cap text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>在"辨识挑战"中回答问题获得智慧值</span></li>
+                        <li class="flex items-start"><i class="fa fa-leaf text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>市场中的草药在探索中较难发现</span></li>
+                        <li class="flex items-start"><i class="fa fa-refresh text-xs mt-1 mr-2 text-accent flex-shrink-0"></i><span>市场商品定期更新</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 中药配方场景 -->
+            <div id="formulaScene" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">中药配方</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 学习经典中药方剂
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">了解经典中药配方及其组成、功效和应用。</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6 stagger-animation" id="formulaGrid"></div>
+            </div>
+
+            <!-- 中医知识场景 -->
+            <div id="knowledgeScene" class="hidden fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                    <h2 class="text-lg md:text-xl font-bold text-primary mb-2 md:mb-0" style="font-family: 'Ma Shan Zheng', cursive;">中医知识</h2>
+                    <div class="bg-secondary/10 rounded-full px-3 py-1 text-xs md:text-sm text-secondary">
+                        <i class="fa fa-info-circle mr-1"></i> 学习中医药基础知识
+                    </div>
+                </div>
+                <p class="text-xs md:text-sm text-secondary mb-4">了解中医药的基本理论、诊断方法和养生知识。</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 stagger-animation">
+                    <div class="bg-white rounded-xl p-4 border border-secondary/20 hover-lift cursor-pointer">
+                        <div class="herb-icon herb-common mb-3">
+                            <i class="fa fa-balance-scale text-white"></i>
+                        </div>
+                        <h3 class="font-bold text-primary mb-2 text-sm md:text-base">阴阳五行</h3>
+                        <p class="text-xs md:text-sm text-secondary">中医理论的核心，阐述人体生理、病理及疾病诊断治疗的基本规律。</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-secondary/20 hover-lift cursor-pointer">
+                        <div class="herb-icon herb-rare mb-3">
+                            <i class="fa fa-stethoscope text-white"></i>
+                        </div>
+                        <h3 class="font-bold text-primary mb-2 text-sm md:text-base">四诊合参</h3>
+                        <p class="text-xs md:text-sm text-secondary">望、闻、问、切四种诊察疾病的方法，相互参照，全面了解病情。</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 border border-secondary/20 hover-lift cursor-pointer">
+                        <div class="herb-icon herb-legendary mb-3">
+                            <i class="fa fa-heartbeat text-white"></i>
+                        </div>
+                        <h3 class="font-bold text-primary mb-2 text-sm md:text-base">经络学说</h3>
+                        <p class="text-xs md:text-sm text-secondary">阐述人体经络系统的生理功能、病理变化及其与脏腑相互关系的理论。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 药草图鉴模态框 -->
+            <div id="guideModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-paper rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto p-4 md:p-6 fade-in border-2 border-primary/20 scrollbar-thin">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-primary/20">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary flex items-center" style="font-family: 'Ma Shan Zheng', cursive;">
+                            <i class="fa fa-book mr-2"></i> 药草图鉴
+                        </h2>
+                        <button id="closeGuideBtn" class="text-primary hover:text-primary/70 text-xl bg-primary/10 hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4" id="herbGuideGrid">
+                        <div class="text-center text-secondary/50 py-8 col-span-full">
+                            <i class="fa fa-book text-4xl mb-2"></i>
+                            <p class="text-base md:text-lg">收集草药来填充你的图鉴</p>
+                            <p class="text-xs md:text-sm mt-1">前往"探索采药"开始你的收集之旅</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成就模态框 -->
+            <div id="achievementModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-paper rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto p-4 md:p-6 fade-in border-2 border-primary/20 scrollbar-thin">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-primary/20">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary flex items-center" style="font-family: 'Ma Shan Zheng', cursive;">
+                            <i class="fa fa-trophy mr-2"></i> 成就系统
+                        </h2>
+                        <button id="closeAchievementBtn" class="text-primary hover:text-primary/70 text-xl bg-primary/10 hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4" id="achievementGrid"></div>
+                </div>
+            </div>
+
+            <!-- 任务模态框 -->
+            <div id="taskModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-paper rounded-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto p-4 md:p-6 fade-in border-2 border-primary/20 scrollbar-thin">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-primary/20">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary flex items-center" style="font-family: 'Ma Shan Zheng', cursive;">
+                            <i class="fa fa-tasks mr-2"></i> 任务系统
+                        </h2>
+                        <button id="closeTaskBtn" class="text-primary hover:text-primary/70 text-xl bg-primary/10 hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4" id="taskGrid"></div>
+                </div>
+            </div>
+
+            <!-- 游戏说明模态框 -->
+            <div id="helpModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-paper rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-4 md:p-6 fade-in border-2 border-primary/20 scrollbar-thin">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-primary/20">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary flex items-center" style="font-family: 'Ma Shan Zheng', cursive;">
+                            <i class="fa fa-question-circle mr-2"></i> 游戏说明
+                        </h2>
+                        <button id="closeHelpBtn" class="text-primary hover:text-primary/70 text-xl bg-primary/10 hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4 text-sm md:text-base">
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-leaf mr-2 text-secondary"></i> 游戏目标
+                            </h3>
+                            <p class="text-secondary">收集全部36种中草药，完成你的百草园，同时学习中医药知识。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-tree mr-2 text-secondary"></i> 百草园
+                            </h3>
+                            <p class="text-secondary">这是你的草药收藏库。已收集的草药会在这里展示，点击可以查看详细信息。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-binoculars mr-2 text-secondary"></i> 探索采药
+                            </h3>
+                            <p class="text-secondary mb-2">前往不同地点寻找草药。每次探索消耗1点精力，精力每5分钟恢复1点。</p>
+                            <ul class="text-xs md:text-sm text-secondary ml-4 list-disc space-y-1">
+                                <li><span class="font-bold">森林：</span>甘草、黄芩、白术、金银花等</li>
+                                <li><span class="font-bold">山地：</span>人参、黄芪、当归等</li>
+                                <li><span class="font-bold">河边：</span>茯苓、泽泻、石斛等</li>
+                                <li><span class="font-bold">田野：</span>生姜、大黄、薄荷、菊花等</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-graduation-cap mr-2 text-secondary"></i> 辨识挑战
+                            </h3>
+                            <p class="text-secondary mb-2">通过答题测试你的中药知识，答对可获得智慧值。</p>
+                            <ul class="text-xs md:text-sm text-secondary ml-4 list-disc space-y-1">
+                                <li><span class="font-bold">名称辨识：</span>根据图片识别草药名称</li>
+                                <li><span class="font-bold">功效匹配：</span>匹配草药与其主要功效</li>
+                                <li><span class="font-bold">性味判断：</span>判断草药的性味归经</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-shopping-cart mr-2 text-secondary"></i> 草药市场
+                            </h3>
+                            <p class="text-secondary">用智慧值交换稀有的草药，丰富你的百草园收藏。</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 flex items-center">
+                                <i class="fa fa-trophy mr-2 text-secondary"></i> 完成目标
+                            </h3>
+                            <p class="text-secondary">当你收集齐全部36种草药，你就完成了百草园的建设，成为一名中医药小达人！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置模态框 -->
+            <div id="settingsModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                <div class="bg-paper rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-4 md:p-6 fade-in border-2 border-primary/20 scrollbar-thin">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-primary/20">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary flex items-center" style="font-family: 'Ma Shan Zheng', cursive;">
+                            <i class="fa fa-cog mr-2"></i> 游戏设置
+                        </h2>
+                        <button id="closeSettingsBtn" class="text-primary hover:text-primary/70 text-xl bg-primary/10 hover:bg-primary/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 text-sm md:text-base">数据管理</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button id="saveGameBtn" class="bg-green-100 hover:bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs md:text-sm transition-colors">
+                                    <i class="fa fa-save mr-1"></i> 保存游戏
+                                </button>
+                                <button id="loadGameBtn" class="bg-blue-100 hover:bg-blue-200 text-blue-700 py-1 px-3 rounded-full text-xs md:text-sm transition-colors">
+                                    <i class="fa fa-folder-open mr-1"></i> 加载游戏
+                                </button>
+                                <button id="exportDataBtn" class="bg-amber-100 hover:bg-amber-200 text-amber-700 py-1 px-3 rounded-full text-xs md:text-sm transition-colors">
+                                    <i class="fa fa-download mr-1"></i> 导出数据
+                                </button>
+                                <button id="resetBtn" class="bg-red-100 hover:bg-red-200 text-red-700 py-1 px-3 rounded-full text-xs md:text-sm transition-colors">
+                                    <i class="fa fa-refresh mr-1"></i> 重新开始
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-primary mb-2 text-sm md:text-base">关于游戏</h3>
+                            <p class="text-secondary text-xs md:text-sm">中药百草园 v3.0 - 中医药文化互动教育游戏</p>
+                            <p class="text-secondary text-xs md:text-sm mt-1">弘扬中医药文化，传承中华智慧</p>
+                            <p class="text-secondary text-xs md:text-sm mt-1">本游戏完全免费，面向所有用户开放</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="mt-6 text-center text-secondary/60 text-xs md:text-sm">
+            <p>中药百草园 &copy; 2024 - 在游戏中学习中药知识，传承中医药文化</p>
+            <div class="mt-2 flex justify-center gap-4">
+                <button id="shareBtn" class="text-secondary/60 hover:text-secondary transition-colors">
+                    <i class="fa fa-share-alt"></i> 分享游戏
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
